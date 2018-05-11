@@ -1,0 +1,650 @@
+<?php
+   ini_set('display_errors', 1);
+   ini_set('display_startup_errors', 1);
+   error_reporting(E_ALL);
+   $_SESSION['completed']=false;
+   
+   include_once('functions.php');
+   include_once('surveydata.php');
+   
+   $key = isset($_REQUEST['key']) ? $_REQUEST['key'] : false;
+   ?>
+<!DOCTYPE html>
+<!--[if IE 8 ]>
+<html class="ie ie8" lang="en">
+   <![endif]-->
+   <!--[if IE 9 ]>
+   <html class="ie ie9" lang="en">
+      <![endif]-->
+      <html lang="en">
+         <!--<![endif]-->
+         <head>
+            <!-- Basic Page Needs -->
+            <meta charset="utf-8">
+            <title>Inventive Talent Survey Board Effectiveness</title>
+            <meta name="description" content="">
+            <meta name="author" content="Ansonika">
+            <!-- Favicons-->
+            <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
+            <link rel="apple-touch-icon" type="image/x-icon" href="img/apple-touch-icon-57x57-precomposed.png">
+            <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="img/apple-touch-icon-72x72-precomposed.png">
+            <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="img/apple-touch-icon-114x114-precomposed.png">
+            <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="img/apple-touch-icon-144x144-precomposed.png">
+            <!-- Mobile Specific Metas -->
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <!-- CSS -->
+            <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+            <link href="css/bootstrap.css" rel="stylesheet">
+            <link href="css/style.css" rel="stylesheet">
+            <link href="font-awesome/css/font-awesome.css" rel="stylesheet" >
+            <link href="css/socialize-bookmarks.css" rel="stylesheet">
+            <link href="js/fancybox/source/jquery.fancybox.css?v=2.1.4" rel="stylesheet">
+            <link href="check_radio/skins/square/aero.css" rel="stylesheet">
+            <!-- Toggle Switch -->
+            <link rel="stylesheet" href="css/jquery.switch.css">
+            <!-- Owl Carousel Assets -->
+            <link href="css/owl.carousel.css" rel="stylesheet">
+            <link href="css/owl.theme.css" rel="stylesheet">
+            <link href="css/custom.css" rel="stylesheet">
+            <!-- Google web font -->
+            <link href='//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800,300' rel='stylesheet' type='text/css'>
+            <!--[if lt IE 9]>
+            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+            <![endif]-->
+            <!-- Jquery -->
+            <script xsrc="js/jquery-1.10.2.min.js"></script>
+            <script xsrc="js/jquery-ui-1.8.22.min.js"></script>
+            <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+            <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+            <!-- Wizard-->
+            <script src="js/jquery.wizard.js"></script>
+            <!-- Radio and checkbox styles -->
+            <script src="check_radio/jquery.icheck.js"></script>
+            <!-- HTML5 and CSS3-in older browsers-->
+            <script src="js/modernizr.custom.17475.js"></script>
+            <!-- Support media queries for IE8 -->
+            <script src="js/respond.min.js"></script>
+            <script>
+               if (localStorage.getItem('key')!='<?php echo $key; ?>'){
+                   localStorage.clear();
+               }
+               
+            </script>
+            <style>
+               .stick {
+               font-size: 14px;
+               position: fixed;
+               top: 0px;
+               background-color: white;
+               z-index: 2;
+               border: 1px solid gray;
+               width: 94%;
+               left: 3%;
+               padding:15px;
+               }
+            </style>
+         </head>
+         <body>
+            <header>
+               <div class="container">
+                  <div class="row">
+                     <div class="col-md-4 col-xs-3" id="logo"><a href="index.html">1. Inventive Talent Survey<sup>&trade;</sup> of Board Effectiveness</a></div>
+                     <div class="btn-responsive-menu"> <span class="bar"></span> <span class="bar"></span> <span class="bar"></span> </div>
+                     <nav class="col-md-8 col-xs-9" id="top-nav">
+                        <ul>
+                           <li><a href="#" data-toggle="modal" data-target="#myModal">About</a></li>
+                        </ul>
+                     </nav>
+                     <!-- End Nav -->
+                  </div>
+                  <!-- End row -->
+               </div>
+               <!-- End container -->
+            </header>
+            <!-- End header -->
+            <div class="container">
+               <div class="row">
+                  <div class="col-md-12 main-title">
+                     <h1><img src="img/its_logo2.png" class="itslogo"></h1>
+                  </div>
+               </div>
+            </div>
+            <section class="container" id="main">
+               <!-- Start Survey container -->
+               <div id="survey_container">
+                  <div id="top-wizard">
+                     <strong>INVENTIVE TALENT SURVEY™ PROGRESS <span id="location"></span></strong>
+                     <div id="progressbar"></div>
+                     <div class="shadow"></div>
+                  </div>
+                  <!-- end top-wizard -->
+                  <form name="example-1" id="wrapped" action="survey_send_1.php" method="POST" >
+                     <div id="middle-wizard">
+                        <?php
+                           if ((!$key) || !getlogin($key) || getlogin($key)[0]['completed'] != '0000-00-00 00:00:00' && getlogin($key)[0]['completed'] != null ){
+                           
+                           
+                              echo "<div style='height:300px'><h3 class=\"col-md-10\">The Key you are using is not active or your survey has been already completed.</h3>";
+                              echo "<h4></h4>";
+                              echo "</div>";
+                           die();
+                           }
+                           else
+                           {
+                           surveyLog('started', getlogin($_REQUEST['key'])[0]['survey_responders_id']);
+                           }
+                           ?>
+                        <!--
+                           <div class="step">
+                           <div class="row">
+                           <h3 class="col-md-10">Enter your personal info</h3>
+                           <div class="col-md-6">
+                           <ul class="data-list">
+                             <li><input type="text" name="firstname" id="firstname"  class="required form-control" placeholder="First name"></li>
+                             <li><input type="text" name="lastname" id="lastname" class="required form-control" placeholder="Last name"></li>
+                             <li><input type="email" name="email" id="email"  class="required form-control" placeholder="Your Email"></li>
+                           </ul>
+                           </div>
+                           
+                           <div class="col-md-6">
+                           <ul class="data-list">
+                             <li>
+                             <div class="styled-select">
+                               <select class="form-control required" name="country">
+                                 <option value="" selected>Select your country</option>
+                                 <option value="Europe">Europe</option>
+                                 <option value="Asia">Asia</option>
+                                 <option value="North America">North America</option>
+                                 <option value="South America">South America</option>
+                               </select>
+                             </div>
+                             </li>
+                           </ul>
+                           
+                           <ul class="data-list">
+                             <li>
+                             <div class="qty-buttons">
+                               <input type="button" value="-" class="qtyminus" name="quantity">
+                               <input type="text" name="quantity" value="" class="qty form-control required" placeholder="none">
+                               <input type="button" value="+" class="qtyplus" name="quantity"><span>Your incrementer</span>
+                             </div>
+                             </li>
+                           </ul>
+                           
+                           <ul class="data-list floated clearfix">
+                             <li id="age"><input type="text" name="age" class="required form-control" placeholder="Age"></li>
+                             <li><input name="gender" type="radio" class="required check_radio" value="Male"><label class="label_gender"> Male</label></li>
+                             <li><input name="gender" type="radio" class="required check_radio" value="Female"><label class="label_gender"> Female</label></li>
+                           </ul>
+                           
+                           </div>
+                           </div>
+                           
+                           <div class="row">
+                           <div class="col-md-4 col-md-offset-4">
+                               <ul class="data-list" id="terms">
+                                   <li>
+                                       <strong>Do you accept <a href="#" data-toggle="modal" data-target="#terms-txt">terms and conditions</a> ?</strong>
+                                       <label class="switch-light switch-ios ">
+                                           <input type="checkbox" name="terms" class="required fix_ie8" value="yes">
+                                           <span>
+                                                       <span class="ie8_hide">No</span>
+                                                       <span>Yes</span>
+                                                   </span>
+                                           <a></a>
+                                       </label>
+                                   </li>
+                               </ul>
+                           </div>
+                           </div>
+                           
+                           </div>
+                           -->
+                        <div class="step row">
+                           <div class="col-md-10">
+                              <h3 class="title">
+                              <?php echo getlogin($key)[0]['survey_name'] ?></h4>
+                              <p>The purpose of this survey is to gather data to inform discussions and decisions that will enhance our individual and
+                                 collective effectiveness as Board members. Please answer all questions as carefully and candidly as possible. The survey is divided
+                                 into four sections:
+                              </p>
+                              <ol>
+                                 <li>1. Composition and Capabilities</li>
+                                 <li>2. Focus and Priorities</li>
+                                 <li>3. Team Dynamics</li>
+                                 <li>4. Individual Capabilities</li>
+                              </ol>
+                              <p>For the first three sections, you will be rating the Board as a unit, the combined characteristics of the entire Board. For the final
+                                 section, you will be rating yourself and each of your Board colleagues on individual capabilities. Your responses will be
+                                 confidential. Only aggregated responses will be reported for review.
+                              </p>
+                              <p>It will normally take <b>45 – 60 minutes</b> to complete the survey. You can move through the survey by using the Forward and
+                                 Backward buttons. If you choose to exit the survey, your responses will be saved so you can complete at a later time. You will
+                                 need your unique link provided in the survey invitation email to reenter the survey. Thank you for your participation in this survey.
+                              </p>
+                           </div>
+                        </div>
+                        <div class="step row">
+                           <div class="col-md-10">
+                              <h3 class="title">Part 1: Board Composition and Capabilities</h3>
+                              <p>Boards should to be comprised of members that bring particular capabilities and perspectives to the team. Collectively, the skills and perspectives create a capability profile that predicts a Board’s ability to effectively review and contribute to strategic business plans and the execution of those plans. Consider the current state of our board as you rate the following core capabilities that are required by virtually every board.</p>
+                           </div>
+                        </div>
+                        <!-- end step -->
+                        <!-- start step -->
+                        <div class="step row">
+                           <div class="col-md-10">
+                              <h3 class="title">Rate Collective Board Capabilities</h3>
+                              <br/>
+                              <?php
+                                 foreach ($surveyarray as $survey){?>
+                              <h3><?php echo $survey['title']?></h3>
+                              <h4><?php echo $survey['description']?></h4>
+                              <?php radioBuild($survey['survey_questions_id']);?>
+                              <?php
+                                 }
+                                 ?>
+                           </div>
+                        </div>
+                        <!-- end step -->
+                        <div class="step row">
+                           <div class="col-md-10">
+                              <h3 class="title">Part 2: Board Focus and Priorities</h3>
+                              <p>Given time and resource constraints, even the most effective boards struggle at times to effectively prioritize their focus. Frequently, the tendency is to overemphasize lagging indicators by reviewing financial reports and key performance indicators and to spend too little time looking forward, analyzing risks, and considering leading indicators of business performance. Effective boards consider a broad range of issues, all requiring some level of focus and prioritization. Please consider the current level of attention given by our board as you rate the following items.</p>
+                           </div>
+                        </div>
+                        <?php
+                           $header = "change";
+                           
+                           foreach ($surveyarray2 as $survey){
+                               $showheader = false;
+                               $showfooter = false;
+                           
+                               if ($header!=$survey['header'] && $header!="change"){$showfooter = true;}
+                               if ($header!=$survey['header']){$showheader = true;}
+                           
+                               viewStandard($survey, $showheader, $showfooter, 'Rate Current Level of Focus');
+                               $header = $survey['header'];
+                           
+                           }
+                           viewStandardEnd();
+                           ?>
+                        <div class="step row">
+                           <div class="col-md-10">
+                              <h3 class="title">Part 3: Board Dynamics</h3>
+                              <p>Effective boards are high-performing teams. For each item that follows, consider and rate how the board currently functions as a team.</p>
+                           </div>
+                        </div>
+                        <div class="step row">
+                           <div class="col-md-10">
+                              <h3 class="title">Rate the Board as a Team</h3>
+                              <br/>
+                              <?php
+                                 foreach ($surveyarray3 as $survey){
+                                 ?>
+                              <!-- start step -->
+                              <h3 class="steptitle">
+                              <?php echo $survey['description']?></h4>
+                              <?php radioBuild5($survey['survey_questions_id']);?>
+                              <!-- end step -->
+                              <?php
+                                 }
+                                 ?>
+                           </div>
+                        </div>
+                        <div class="step row">
+                           <div class="col-md-10">
+                              <h3 class="title">Part 4: Individual Director Capabilities.</h3>
+                              <h5>We all have areas of expertise and leadership skills as well as developmental opportunities. This survey section is an opportunity to rate yourself and your Board colleagues on 30 capabilities that contribute to success as a Board member. All of your answers will be kept strictly confidential and never associated with your name.  Only aggregated and averaged rating data will be reported. You will receive a personal and confidential report on your scores on the 30 capability items. </h5>
+                              <h5>NOTE: Please rate yourself and each of your colleagues on all 30 items.  A response is required on all items.  Please limit use of the “Can’t Rate Clearly” option.
+                              </h5>
+                           </div>
+                        </div>
+                        <?php
+                           foreach ($surveyarray4 as $survey){
+                                 ?>
+                        <!-- start step -->
+                        <div class="step row">
+                           <div class="col-md-10">
+                              <div id="xsticker">
+                                 <h3 class="title"><?php echo $survey['header']?></h3>
+                                 <h4 class="skillsubheader"><?php echo $survey['title']?>: <?php echo $survey['description']?></h4>
+                              </div>
+                              <?php
+                                 foreach ($boardmembersarray as $boardmember){
+                                 ?>
+                              <div class="nameslider"><?php echo $boardmember['name']?></div>
+                              <?php radioBuild7($survey['survey_questions_id'] , $boardmember['survey_responders_id']);?>
+                              <?php
+                                 }
+                                 ?>
+                           </div>
+                        </div>
+                        <!-- end step -->
+                        <?php
+                           }
+                           ?>
+                        <?php
+                           foreach ($surveyarray5 as $survey){
+                                 ?>
+                        <!-- start step -->
+                        <div class="step row">
+                           <div class="col-md-10">
+                              <h3 class="title"><?php echo $survey['header']?></h3>
+                              <h4 class="skillsubheader"><?php echo $survey['title']?>: <?php echo $survey['description']?></h4>
+                              <?php
+                                 foreach ($boardmembersarray as $boardmember){
+                                 ?>
+                              <div class="nameslider"><?php echo $boardmember['name']?></div>
+                              <?php radioBuild7($survey['survey_questions_id'] , $boardmember['survey_responders_id']);?>
+                              <?php
+                                 }
+                                 ?>
+                           </div>
+                        </div>
+                        <!-- end step -->
+                        <?php
+                           }
+                           ?>
+                        <!--
+                           <div class="step row">
+                               <div class="col-md-10">
+                                <h3>Interview Template</h3>
+                                   <p>The following items are suggested interview questions for director candidates. The list is not exhaustive – selection criteria will be driven by the particular needs of the board which will change with business conditions. A skilled interviewer will follow up each question with probes that will vary with responses provided by the candidate. These items can also, with minor variation, be used to interview references. It’s a good idea to follow up some questions by asking, “What did you learn?”</p>
+                               </div>
+                           </div>
+                           
+                                   <?php
+                              $str_radioBuildtext='';
+                              foreach ($surveyarray6 as $survey){
+                              ?>
+                           
+                                   <div class="step row">
+                                       <div class="col-md-10">
+                                           <h3><?php echo $survey['title']?></h3>
+                                           <h4><?php echo $survey['description']?></h4>
+                                           <ul>
+                                               <?php
+                              foreach ($survey['questions'] as $questions){
+                                  ?>
+                                               <li><?php echo $questions ?><br/><br/>
+                                                   <textarea name="question[<?php echo $survey['survey_questions_id'] ?>]" class="form-control textoption" style="height:200px"></textarea>
+                                               </li>
+                                               <?php
+                              $str_radioBuildtext .= "$(\"textarea[name='question[" . $survey['survey_questions_id'] . "]'\").val(sessionStorage.getItem('question[" . $survey['survey_questions_id'] . "]'));";
+                              
+                              
+                              //$str_radioBuildtext .= "$(\"textarea[name='question[" .  . "]'][val='\" + sessionStorage.getItem('question[" . $survey['survey_questions_id'] . "]') + \"]\");\n";
+                              
+                              } ?>
+                                           </ul>
+                                       </div>
+                                   </div>
+                           
+                                   <?php
+                              }
+                              
+                              ?>
+                           -->
+                        <!--
+                           <div class="step row">
+                             <div class="col-md-10">
+                              <h3>The Board as a Team</h3><p>The intent of this assessment is to enhance our individual and collective contributions. Your individual responses will only be seen by an external consultant who will not report individual scoring. Only aggregated results will be reported. Please rate the following items candidly.<br/></br/>
+                           Rank order the greatest capability needs (skill gaps) for our Board. For example, if the greatest need or gap on the board is capability related to Global Perspective followed by capability related to Technology, those two items would be rated 1 and 2. Rate the top 4.</p>
+                               <ul id="sortable">
+                                 <li class="ui-state-default rank"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Design</li>
+                                 <li class="ui-state-default rank"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Finance</li>
+                                 <li class="ui-state-default rank"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Global Perspective</li>
+                                 <li class="ui-state-default rank"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Government</li>
+                                 <li class="ui-state-default rank"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Innovation</li>
+                                 <li class="ui-state-default rank"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Legal</li>
+                                 <li class="ui-state-default rank"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Logistics</li>
+                                 <li class="ui-state-default rank"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Manufacturing</li>
+                                 <li class="ui-state-default rank"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Marketing</li>
+                                 <li class="ui-state-default rank"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Mergers & Acquisitions</li>
+                                 <li class="ui-state-default rank"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Political</li>
+                                 <li class="ui-state-default rank"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Regulatory</li>
+                                 <li class="ui-state-default rank"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Research</li>
+                                 <li class="ui-state-default rank"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Talent Management & Succession Planning</li>
+                                 <li class="ui-state-default rank"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Technology</li>
+                                 <li class="ui-state-default rank"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Other</li>
+                               </ul>
+                             </div>
+                           </div>
+                           -->
+                        <div class="submit step" id="complete">
+                           <i class="icon-warning-sign"></i>
+                           <h3 class="title">Survey complete.</h3>
+                           <h4>You've completed all survey items but still have an opportunity to review and change items.  When you're ready, please use the SUBMIT button to close the survey.  You will not be able to return to the survey once your submitted your responses.</h4>
+                           <button type="submit" name="process" id="submitreport" class="submit">SUBMIT</button>
+                        </div>
+                        <!-- end submit step -->
+                     </div>
+                     <!-- end middle-wizard -->
+                     <div id="bottom-wizard">
+                        <button type="button" name="backward" class="backward">Backward</button>
+                        <button type="button" name="forward" class="forward">
+                           Forward </button
+                     </div>
+                     <!-- end bottom-wizard -->
+                     <input type="hidden" name="survey_responders_id" value="<?php echo getlogin(isset($_REQUEST['key']) ? $_REQUEST['key'] : '')[0]['survey_responders_id'] ?>">
+                     <input type="hidden" name="key" value="<?php echo $key ?>">
+                  </form>
+               </div>
+               <!-- end Survey container -->
+            </section>
+            <!-- end section main container -->
+            <footer>
+            <section class="container">
+            <div class="row">
+            <!--
+               <div class="col-md-4">
+                   <h3>About Inventive Talent</h3>
+                     <p>Lorem ipsum dolor sit amet, duo iudico accusamus ne, at vix sumo alia. Usu etiam probatus ne, eu magna ullum iusto his. Nec ea case eirmod dissentiunt. Etiam denique has cu, nam quando accusamus dissentiunt ne. Ea sit malorum scribentur.</p>
+                 </div>
+               
+                 <div class="col-md-4" id="contact">
+                   <h3>Contact info</h3>
+                     <p>Nec ea case eirmod dissentiunt. Etiam denique has cu, nam quando accusamus dissentiunt ne. </p>
+                         <ul>
+                                 <li><i class="icon-home"></i> 1110 Bates Avenue Los Angeles, CA 90029, US</li>
+                                 <li><i class="icon-phone"></i> Telephone: 41.22.319.36.10 </li>
+                                 <li><i class="icon-envelope"></i> Email: <a href="#">info@annova.com </a></li>
+                                 <li><i class="icon-skype"></i> Skype name: Annova</li>
+                             </ul>
+                 </div>
+               
+                 <div class="col-md-4">
+                   <h3>Latest tweet</h3>
+                      <div class="latest-tweets" data-number="10" data-username="ansonika" data-mode="fade" data-pager="false" data-nextselector=".tweets-next" data-prevselector=".tweets-prev" data-adaptiveheight="true"></div>
+                       <div class="tweet-control">
+                         <div class="tweets-prev"></div>
+                         <div class="tweets-next"></div>
+                       </div>
+                 </div>
+                 -->
+            </div>
+            </section>
+            <section id="footer_2">
+            <div class="container">
+            <div class="row">
+            <div class="col-md-6">
+            <ul id="footer-nav">
+            <li>&copy; <?php echo DATE('Y')?> by Inventive Talent Consulting.</li>
+            <li><a href="#" data-toggle="modal" data-target="#terms-txt">Terms of Use</a></li>
+            <li><a href="#" data-toggle="modal" data-target="#privacy-txt">Privacy</a></li>
+            </ul>
+            </div>
+            <div class="col-md-6" style="text-align:center">
+            <!--  <ul class="social-bookmarks clearfix">
+               <li class="facebook"><a href="#">facebook</a></li>
+               <li class="googleplus"><a href="#">googleplus</a></li>
+               <li class="twitter"><a href="#">twitter</a></li>
+               <li class="delicious"><a href="#">delicious</a></li>
+               <li class="paypal"><a href="#">paypal</a></li>
+               </ul>
+               -->
+            </div>
+            </div>
+            </div>
+            </section>
+            </footer>
+            <div id="toTop">Back to Top</div>
+            <!-- Modal About -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel">About Inventive Talent Survey</h4>
+            </div>
+            <div class="modal-body">
+            <p>The intent of this assessment is to inform discussions and decisions that will enhance our individual and collective effectiveness as board members. Your individual responses will be kept anonymous as they’re aggregated for review. Please rate the following items candidly.  The developer of this survey is Inventive Talent Consulting, <a href="http://www.InventiveTalent.com" target="_blank">www.InventiveTalent.com</a>. <br/><br/>If you have questions or require assistance, please email:  <a href="mailto:TechSupport@InventiveTalent.com">TechSupport@InventiveTalent.com</a>.</p>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+            </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+            <!-- Modal Terms -->
+            <div class="modal fade" id="terms-txt" tabindex="-1" role="dialog" aria-labelledby="termsLabel" aria-hidden="true">
+               <div class="modal-dialog">
+                  <div class="modal-content">
+                     <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="termsLabel">Terms and conditions</h4>
+                     </div>
+                     <div class="modal-body">
+                        <?php include_once('terms.inc'); ?>
+                     </div>
+                     <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                     </div>
+                  </div>
+                  <!-- /.modal-content -->
+               </div>
+               <!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal -->
+            <!-- Modal Privacy -->
+            <div class="modal fade" id="privacy-txt" tabindex="-1" role="dialog" aria-labelledby="privacyLabel" aria-hidden="true">
+               <div class="modal-dialog">
+                  <div class="modal-content">
+                     <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="termsLabel">Privacy Policy</h4>
+                     </div>
+                     <div class="modal-body">
+                        <?php include_once('privacy.inc'); ?>
+                     </div>
+                     <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                     </div>
+                  </div>
+                  <!-- /.modal-content -->
+               </div>
+               <!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal -->
+            <script>
+               <?php
+                  echo $str_radioBuild;
+                  echo $str_radioBuild2;
+                  echo $str_radioBuild5;
+                  echo $str_radioBuild7;
+                  echo $str_radioBuildtext;
+                  ?>
+               
+               $(document).on('click', '.option', function (idx, elm) {
+                   optionname = idx.toElement.name;
+                   optionvalue = idx.toElement.value;
+                   localStorage.setItem(optionname, optionvalue);
+               
+                   console.log(optionname + ' ' + optionvalue);
+                   //event.stopPropagation();
+                   //event.stopImmediatePropagation();
+               });
+               
+               $(document).on('blur', '.textoption', function (idx, elm) {
+               
+                   optionname = idx.currentTarget.name;
+                   optionvalue = idx.currentTarget.value;
+                   //sessionStorage.setItem(optionname, optionvalue);
+                   localStorage.setItem(optionname, optionvalue);
+                   console.log(optionname + ' ' + optionvalue);
+               
+                   //event.stopPropagation();
+                   //event.stopImmediatePropagation();
+               });
+               
+               $(function() {
+                   
+                   localStorage.setItem('key', '<?php echo $key;?>');
+                   $(".rank").css("background","#ffeaea");
+               
+                   $( "#sortable" ).sortable({
+                       axis: "y",
+                       revert: true,
+                       scroll: false,
+                       placeholder: "sortable-placeholder",
+                       cursor: "move",
+                       start: function(event, ui) {
+                           $(ui.item).css("opacity", "0.6");
+                       },
+                       stop: function(event, ui){
+                           $(ui.item).css("opacity", "1.0");
+                           $(".rank").css("background","#ffeaea");
+                           $(".rank").slice(0, 4).css("background","#1ab9a7");
+                       }
+                   });
+                   $( "#sortable" ).disableSelection();
+               } );
+               
+               window.addEventListener('offline', function(e) {
+                   $("#submitreport").text("Internet Connection Required to Submit");
+                   $("#submitreport").attr("disabled", "disabled");
+               
+               });
+               
+               window.addEventListener('online', function(e) {
+                   $("#submitreport").text("SUBMIT");
+                   $("#submitreport").removeAttr("disabled");
+               });
+               
+            </script>
+            <!-- OTHER JS -->
+            <script src="js/jquery.validate.js"></script>
+            <script src="js/jquery.placeholder.js"></script>
+            <script src="js/jquery.tweet.min.js"></script>
+            <script src="js/jquery.bxslider.min.js"></script>
+            <script src="js/quantity-bt.js"></script>
+            <script src="js/bootstrap.js"></script>
+            <script src="js/retina.js"></script>
+            <script src="js/functions.js?<?php echo time()?>"></script>
+            <!-- FANCYBOX -->
+            <script  src="js/fancybox/source/jquery.fancybox.pack.js?v=2.1.4" type="text/javascript"></script>
+            <script src="js/fancybox/source/helpers/jquery.fancybox-media.js?v=1.0.5" type="text/javascript"></script>
+            <script src="js/fancy_func.js" type="text/javascript"></script>
+            <script>
+               $(document).ready(function() {
+               var s = $("#sticker");
+               var pos = s.position();      
+               var pos_top = pos.top + 50;
+               $(window).scroll(function() {
+                   var windowpos = $(window).scrollTop();
+               
+                   console.log("Distance from top:" + pos_top + "<br />Scroll position: " + (windowpos));
+                   //s.html("Distance from top:" + pos.top + "<br />Scroll position: " + windowpos);
+                   if ((windowpos) >= pos_top) {
+                       console.log('stick');
+                       s.addClass("stick");
+                   } else {
+                       s.removeClass("stick");
+                       console.log('dontstick');
+                   }
+               });
+               });
+            </script>
+         </body>
+      </html>

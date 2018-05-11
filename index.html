@@ -1,0 +1,533 @@
+<?
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+$_SESSION['completed']=false;
+
+include_once('functions.php');
+include_once('surveydata.php');
+?>
+<!DOCTYPE html>
+<!--[if IE 8 ]>
+<html class="ie ie8" lang="en">
+   <![endif]-->
+   <!--[if IE 9 ]>
+   <html class="ie ie9" lang="en">
+      <![endif]-->
+      <html lang="en">
+         <!--<![endif]-->
+         <head>
+            <!-- Basic Page Needs -->
+            <meta charset="utf-8">
+            <title>Inventive Talent Survey</title>
+            <meta name="description" content="">
+            <meta name="author" content="Ansonika">
+            <!-- Favicons-->
+            <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
+            <link rel="apple-touch-icon" type="image/x-icon" href="img/apple-touch-icon-57x57-precomposed.png">
+            <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="img/apple-touch-icon-72x72-precomposed.png">
+            <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="img/apple-touch-icon-114x114-precomposed.png">
+            <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="img/apple-touch-icon-144x144-precomposed.png">
+            <!-- Mobile Specific Metas -->
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <!-- CSS -->
+            <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+            <link href="css/bootstrap.css" rel="stylesheet">
+            <link href="css/style.css" rel="stylesheet">
+            <link href="font-awesome/css/font-awesome.css" rel="stylesheet" >
+            <link href="css/socialize-bookmarks.css" rel="stylesheet">
+            <link href="js/fancybox/source/jquery.fancybox.css?v=2.1.4" rel="stylesheet">
+            <link href="check_radio/skins/square/aero.css" rel="stylesheet">
+            <!-- Toggle Switch -->
+            <link rel="stylesheet" href="css/jquery.switch.css">
+            <!-- Owl Carousel Assets -->
+            <link href="css/owl.carousel.css" rel="stylesheet">
+            <link href="css/owl.theme.css" rel="stylesheet">
+            <link href="css/custom.css" rel="stylesheet">
+            <!-- Google web font -->
+            <link href='//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800,300' rel='stylesheet' type='text/css'>
+            <!--[if lt IE 9]>
+            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+            <![endif]-->
+            <!-- Jquery -->
+            <script xsrc="js/jquery-1.10.2.min.js"></script>
+            <script xsrc="js/jquery-ui-1.8.22.min.js"></script>
+            <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+            <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+            <!-- Wizard-->
+            <script src="js/jquery.wizard.js"></script>
+            <!-- Radio and checkbox styles -->
+            <script src="check_radio/jquery.icheck.js"></script>
+            <!-- HTML5 and CSS3-in older browsers-->
+            <script src="js/modernizr.custom.17475.js"></script>
+            <!-- Support media queries for IE8 -->
+            <script src="js/respond.min.js"></script>
+            
+            <style>
+               .stick {
+               font-size: 14px;
+               position: fixed;
+               top: 0px;
+               background-color: white;
+               z-index: 2;
+               border: 1px solid gray;
+               width: 94%;
+               left: 3%;
+               padding:15px;
+               }
+            </style>
+         </head>
+         <body>
+            <header>
+               <div class="container">
+                  <div class="row">
+                    <?php
+                    
+                    $key = isset($_REQUEST['key']) ? $_REQUEST['key'] : false;
+
+                    if ((!$key) || !getlogin($key) || getlogin($key)['completed'] != '0000-00-00 00:00:00' && getlogin($key)['completed'] != null ){
+
+                    echo "<div style='height:300px'><h3><br/><br/>The Key you are using is not active or your survey has been already completed.</h3>";
+                    echo "</div></div></div></header></body></html>";
+                    die();
+                    }
+                    ?>
+                    
+                     <div class="col-md-4 col-xs-3" id="logo"><a href="index.html">1. Inventive Talent Survey<sup>&trade;</sup> of Board Effectiveness</a></div>
+                     <div class="btn-responsive-menu"> <span class="bar"></span> <span class="bar"></span> <span class="bar"></span> </div>
+                     <nav class="col-md-8 col-xs-9" id="top-nav">
+                        <ul>
+                           <li><a href="#" data-toggle="modal" data-target="#myModal">About</a></li>
+                        </ul>
+                     </nav>
+                     <!-- End Nav -->
+                  </div>
+                  <!-- End row -->
+               </div>
+               <!-- End container -->
+            </header>
+            <!-- End header -->
+            <div class="container">
+               <div class="row">
+                  <div class="col-md-12 main-title">
+                     <h1><img src="img/<?php echo $surveytypearray['survey_type_logo']?>" class="itslogo" alt="<?php echo $surveytypearray['survey_type_name']?>"></h1>
+                  </div>
+               </div>
+            </div>
+            <section class="container" id="main">
+               <!-- Start Survey container -->
+               <div id="survey_container">
+                  <div id="top-wizard">
+                     <strong>INVENTIVE TALENT SURVEY™ PROGRESS <span id="location"></span></strong>
+                     <div id="progressbar"></div>
+                     <div class="shadow"></div>
+                  </div>
+                  <!-- end top-wizard -->
+                  <form name="example-1" id="wrapped" action="survey_send_1.php" method="POST" >
+                     <div id="middle-wizard">
+                         <?php
+                         surveyLog('started', getlogin($_REQUEST['key'])['survey_responders_id']);
+                         ?>
+                        <div class="step row">
+                           <div class="col-md-10">
+                              <h3 class="title"><?php echo getlogin($key)['survey_name'] ?></h3>
+                              <?php echo $surveytypearray['survey_type_opening']?>
+                           </div>
+                        </div>
+                        <?php
+                        $sectionnumber=1;
+                        //if Section/Survey Type Exists Show
+                        if (sectionInfo($sectionnumber,getlogin($key)['survey_type_id'])){
+                        ?>
+                        <!-- start step -->
+                        <div class="step row">
+                           <div class="col-md-10">
+                              <h3 class="title"><?php echo sectionInfo(1,getlogin($key)['survey_type_id'])['survey_section_title']?></h3>
+                              <?php echo sectionInfo($sectionnumber,getlogin($key)['survey_type_id'])['survey_section_opening']?>
+                           </div>
+                        </div>
+                        <!-- end step -->
+                        <!-- start step 1 -->
+                        <div class="step row">
+                           <div class="col-md-10">
+                              <h3 class="title"><?php echo sectionInfo(1,getlogin($key)['survey_type_id'])['survey_section_header']?></h3>
+                              <br/>
+                              <?php
+                                 foreach ($surveyarray as $survey){?>
+                              <h3><?php echo $survey['title']?></h3>
+                              <h4><?php echo $survey['description']?></h4>
+                              <?php
+                              if (getlogin($key)['survey_type_id']==1){
+                                radioBuild($survey['survey_questions_id']);
+                              }
+                              else{
+                                radioBuild_type2($survey['survey_questions_id']);
+                              }
+                            }
+                              ?>
+                              
+                           </div>
+                        </div>
+                        <!-- end step -->
+                        <?php
+                      }
+                        $sectionnumber=2;
+                        //if Section/Survey Type Exists Show
+                        if (sectionInfo($sectionnumber,getlogin($key)['survey_type_id'])){
+                        ?>
+                        <!-- Step 2 -->
+                        <div class="step row">
+                           <div class="col-md-10">
+                              <h3 class="title"><?php echo sectionInfo($sectionnumber,getlogin($key)['survey_type_id'])['survey_section_title']?></h3>
+                              <?php echo sectionInfo($sectionnumber,getlogin($key)['survey_type_id'])['survey_section_opening']?>
+                           </div>
+                        </div>
+                        <?php
+
+                             $header = "change";
+                             
+                             foreach ($surveyarray2 as $survey){
+
+                                
+                                 $showheader = false;
+                                 $showfooter = false;
+                             
+                                 if ($header!=$survey['header'] && $header!="change"){$showfooter = true;}
+                                 if ($header!=$survey['header']){$showheader = true;}
+                             
+                                 viewStandard($survey, $showheader, $showfooter, 'Rate Current Level of Focus');
+                                 $header = $survey['header'];
+                             
+                             }
+                             viewStandardEnd();
+                           
+                           }
+
+                        $sectionnumber=3;
+                        //if Section/Survey Type Exists Show
+                        if (sectionInfo($sectionnumber,getlogin($key)['survey_type_id'])){
+                        ?>
+                           <!-- Step 3 -->
+                        <div class="step row">
+                           <div class="col-md-10">
+                              <h3 class="title"><?php echo sectionInfo($sectionnumber,getlogin($key)['survey_type_id'])['survey_section_title']?></h3>
+                              <?php echo sectionInfo($sectionnumber,getlogin($key)['survey_type_id'])['survey_section_opening'] ?>
+                           </div>
+                        </div>
+                        <div class="step row">
+                           <div class="col-md-10">
+                              <h3 class="title"><?php echo sectionInfo($sectionnumber,getlogin($key)['survey_type_id'])['survey_section_header'] ?></h3>
+                              <br/>
+                              <?php
+                                 foreach ($surveyarray3 as $survey){
+                                 ?>
+                              <!-- start step -->
+                              <h3 class="steptitle">
+                              <?php echo $survey['description']?></h4>
+                              <?php radioBuild5($survey['survey_questions_id']);?>
+                              <!-- end step -->
+                              <?php
+                                 }
+                                 ?>
+                           </div>
+                        </div>
+                          <?php
+                        }
+                        $sectionnumber=4;
+                        //if Section/Survey Type Exists Show
+                        if (sectionInfo($sectionnumber,getlogin($key)['survey_type_id'])){
+                        ?>
+                        <!-- Step 4 -->
+                        <div class="step row">
+                           <div class="col-md-10">
+                              <h3 class="title"><?php echo sectionInfo($sectionnumber,getlogin($key)['survey_type_id'])['survey_section_title']?></h3>
+                              <?php echo sectionInfo($sectionnumber,getlogin($key)['survey_type_id'])['survey_section_opening'] 
+                              ?>
+                           </div>
+                        </div>
+                        <?php
+                           foreach ($surveyarray4 as $survey){
+                                 ?>
+                        <!-- start step -->
+                        <div class="step row">
+                           <div class="col-md-10">
+                              <div id="xsticker">
+                                 <h3 class="title"><?php echo $survey['header']?></h3>
+                                 <h4 class="skillsubheader"><?php 
+                                  if ($survey['title'] && sectionInfo($sectionnumber,getlogin($key)['survey_type_id']!=2)) echo $survey['title'] . ":"; 
+                                  echo $survey['description'];
+                                  ?>
+                                  </h4>
+                              </div>
+                              <?php
+                                 foreach ($boardmembersarray as $boardmember){
+                                 ?>
+                              <div class="nameslider"><?php echo $boardmember['name']?></div>
+                              <?php radioBuild7($survey['survey_questions_id'] , $boardmember['survey_responders_id']);?>
+                              <?php
+                                 }
+                                 ?>
+                           </div>
+                        </div>
+                        <!-- end step -->
+                        <?php
+                           }
+                         }
+
+                        $sectionnumber=5;
+                        //if Section/Survey Type Exists Show
+                        if (sectionInfo($sectionnumber,getlogin($key)['survey_type_id'])){
+
+                           foreach ($surveyarray5 as $survey){?>
+                        <!-- start step -->
+                        <div class="step row">
+                           <div class="col-md-10">
+                              <h3 class="title"><?php echo $survey['header']?></h3>
+                              <h4 class="skillsubheader"><?php echo $survey['title']?>: <?php echo $survey['description']?></h4>
+                              <?php
+                                 foreach ($boardmembersarray as $boardmember){
+                                 ?>
+                                    <div class="nameslider"><?php echo $boardmember['name']?></div>
+                                    <?php 
+
+                                    if (getlogin($key)['survey_type_id']==1){
+                                      radioBuild7($survey['survey_questions_id'] , $boardmember['survey_responders_id']);
+                                    }
+                                    else{
+                                      radioBuild7_type2($survey['survey_questions_id'] , $boardmember['survey_responders_id']);
+                                    }
+                                    
+                                 }
+                                 ?>
+                           </div>
+                        </div>
+                        <!-- end step -->
+                        <?php
+                           }
+                         }
+                           ?>
+                        
+                        <div class="submit step" id="complete">
+                           <i class="icon-warning-sign"></i>
+                           <h3 class="title">Survey complete.</h3>
+                           <h4>You've completed all survey items but still have an opportunity to review and change items.  When you're ready, please use the SUBMIT button to close the survey.  You will not be able to return to the survey once you have submitted your responses.</h4>
+                           <button type="submit" name="process" id="submitreport" class="submit">SUBMIT</button>
+                        </div>
+                        <!-- end submit step -->
+                     </div>
+                     <!-- end middle-wizard -->
+                     <div id="bottom-wizard">
+                        <button type="button" name="backward" class="backward">Backward</button>
+                        <button type="button" name="forward" class="forward">
+                           Forward </button>
+                     </div>
+                     <!-- end bottom-wizard -->
+                     <input type="hidden" name="survey_responders_id" value="<?php echo getlogin(isset($_REQUEST['key']) ? $_REQUEST['key'] : '')['survey_responders_id'] ?>">
+                     <input type="hidden" name="key" value="<?php echo $key ?>">
+                  </form>
+               </div>
+               <!-- end Survey container -->
+            </section>
+            <!-- end section main container -->
+            <footer>
+            <section class="container">
+            <div class="row">
+            
+            </div>
+            </section>
+            <section id="footer_2">
+            <div class="container">
+            <div class="row">
+            <div class="col-md-6">
+            <ul id="footer-nav">
+            <li>&copy; <?php echo DATE('Y')?> by Inventive Talent Consulting.</li>
+            <li><a href="#" data-toggle="modal" data-target="#terms-txt">Terms of Use</a></li>
+            <li><a href="#" data-toggle="modal" data-target="#privacy-txt">Privacy</a></li>
+            </ul>
+            </div>
+            <div class="col-md-6" style="text-align:center">
+            <!--  <ul class="social-bookmarks clearfix">
+               <li class="facebook"><a href="#">facebook</a></li>
+               <li class="googleplus"><a href="#">googleplus</a></li>
+               <li class="twitter"><a href="#">twitter</a></li>
+               <li class="delicious"><a href="#">delicious</a></li>
+               <li class="paypal"><a href="#">paypal</a></li>
+               </ul>
+               -->
+            </div>
+            </div>
+            </div>
+            </section>
+            </footer>
+            <div id="toTop">Back to Top</div>
+            <!-- Modal About -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel">About Inventive Talent Survey</h4>
+            </div>
+            <div class="modal-body">
+            <p>The intent of this assessment is to inform discussions and decisions that will enhance our individual and collective effectiveness as board members. Your individual responses will be kept anonymous as they’re aggregated for review. Please rate the following items candidly.  The developer of this survey is Inventive Talent Consulting, <a href="http://www.InventiveTalent.com" target="_blank">www.InventiveTalent.com</a>. <br/><br/>If you have questions or require assistance, please email:  <a href="mailto:TechSupport@InventiveTalent.com">TechSupport@InventiveTalent.com</a>.</p>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+            </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+            <!-- Modal Terms -->
+            <div class="modal fade" id="terms-txt" tabindex="-1" role="dialog" aria-labelledby="termsLabel" aria-hidden="true">
+               <div class="modal-dialog">
+                  <div class="modal-content">
+                     <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="termsLabel">Terms and conditions</h4>
+                     </div>
+                     <div class="modal-body">
+                        <?php include_once('terms.inc'); ?>
+                     </div>
+                     <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                     </div>
+                  </div>
+                  <!-- /.modal-content -->
+               </div>
+               <!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal -->
+            <!-- Modal Privacy -->
+            <div class="modal fade" id="privacy-txt" tabindex="-1" role="dialog" aria-labelledby="privacyLabel" aria-hidden="true">
+               <div class="modal-dialog">
+                  <div class="modal-content">
+                     <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="termsLabel">Privacy Policy</h4>
+                     </div>
+                     <div class="modal-body">
+                        <?php include_once('privacy.inc'); ?>
+                     </div>
+                     <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                     </div>
+                  </div>
+                  <!-- /.modal-content -->
+               </div>
+               <!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal -->
+            <script>
+              
+               if (localStorage.getItem('key')!='<?php echo $key; ?>'){
+                   localStorage.clear();
+                   console.log('clear storage');
+               }
+                    
+               <?php
+                  if (isset($str_radioBuild)) echo $str_radioBuild;
+                  if (isset($str_radioBuild_type2)) echo $str_radioBuild_type2;
+                  if (isset($str_radioBuild2)) echo $str_radioBuild2;
+                  if (isset($str_radioBuild_type2Capabilities)) echo $str_radioBuild_type2Capabilities;
+                  if (isset($str_radioBuild5)) echo $str_radioBuild5;
+                  if (isset($str_radioBuild7)) echo $str_radioBuild7;
+                  if (isset($str_radioBuildtext)) echo $str_radioBuildtext;
+                  ?>
+               
+               $(document).on('click', '.option', function (idx, elm) {
+                   optionname = idx.toElement.name;
+                   optionvalue = idx.toElement.value;
+                   localStorage.setItem(optionname, optionvalue);
+               
+                   console.log(optionname + ' ' + optionvalue);
+                   //event.stopPropagation();
+                   //event.stopImmediatePropagation();
+               });
+               
+               $(document).on('blur', '.textoption', function (idx, elm) {
+               
+                   optionname = idx.currentTarget.name;
+                   optionvalue = idx.currentTarget.value;
+                   //sessionStorage.setItem(optionname, optionvalue);
+                   localStorage.setItem(optionname, optionvalue);
+                   console.log(optionname + ' ' + optionvalue);
+               
+                   //event.stopPropagation();
+                   //event.stopImmediatePropagation();
+               });
+               
+               $(function() {
+                   
+                   localStorage.setItem('key', '<?php echo $key;?>');
+                   $(".rank").css("background","#ffeaea");
+               
+                   $( "#sortable" ).sortable({
+                       axis: "y",
+                       revert: true,
+                       scroll: false,
+                       placeholder: "sortable-placeholder",
+                       cursor: "move",
+                       start: function(event, ui) {
+                           $(ui.item).css("opacity", "0.6");
+                       },
+                       stop: function(event, ui){
+                           $(ui.item).css("opacity", "1.0");
+                           $(".rank").css("background","#ffeaea");
+                           $(".rank").slice(0, 4).css("background","#1ab9a7");
+                       }
+                   });
+                   $( "#sortable" ).disableSelection();
+               } );
+               
+               window.addEventListener('offline', function(e) {
+                   $("#submitreport").text("Internet Connection Required to Submit");
+                   $("#submitreport").attr("disabled", "disabled");
+               
+               });
+               
+               window.addEventListener('online', function(e) {
+                   $("#submitreport").text("SUBMIT");
+                   $("#submitreport").removeAttr("disabled");
+               });
+               
+            </script>
+            <!-- OTHER JS -->
+            <script src="js/jquery.validate.js"></script>
+            <script src="js/jquery.placeholder.js"></script>
+            <script src="js/jquery.tweet.min.js"></script>
+            <script src="js/jquery.bxslider.min.js"></script>
+            <script src="js/quantity-bt.js"></script>
+            <script src="js/bootstrap.js"></script>
+            <script src="js/retina.js"></script>
+            <script src="js/functions.js?<?php echo time()?>"></script>
+            <!-- FANCYBOX -->
+            <script  src="js/fancybox/source/jquery.fancybox.pack.js?v=2.1.4" type="text/javascript"></script>
+            <script src="js/fancybox/source/helpers/jquery.fancybox-media.js?v=1.0.5" type="text/javascript"></script>
+            <script src="js/fancy_func.js" type="text/javascript"></script>
+            <script> 
+              /*
+               $(document).ready(function() {
+                if ($("#sticker")){
+                   var s = $("#sticker");
+                   var pos = s.position();      
+                   var pos_top = pos.top + 50;
+
+                   $(window).scroll(function() {
+                       var windowpos = $(window).scrollTop();
+                   
+                       console.log("Distance from top:" + pos_top + "<br />Scroll position: " + (windowpos));
+                       //s.html("Distance from top:" + pos.top + "<br />Scroll position: " + windowpos);
+                       if ((windowpos) >= pos_top) {
+                           console.log('stick');
+                           s.addClass("stick");
+                       } else {
+                           s.removeClass("stick");
+                           console.log('dontstick');
+                       }
+                   });
+                    }
+                   });
+                */
+            </script>
+         </body>
+      </html>
